@@ -43,15 +43,22 @@ public class Ship extends InputAdapter {
 	private float fuel;
 	private int smallLightDistance = 70, spotLightDistance = 250;
 	private float smallLightPulseTimer = 0.0f;
-	private float width, height;
+	private float width, height, worldWidth, worldHeight;
+	private boolean isMovingLeft, isMovingRight, isMovingUp, isMovingDown;
+
+	// movement
+	private float maxSpeed = 30;
+
 	public boolean isFiringMainRocket = false, isFiringLeftRocket = false,
 			isFiringRightRocket = false, isDead = false;
-	
+
 	public Ship(World world, Vector2 initPos) {
 		this.x = initPos.x;
 		this.y = initPos.y;
 		this.width = 5;
 		this.height = 5;
+		this.worldWidth = 58;
+		this.worldHeight = 30;
 		fuel = 1.0f;
 
 		FixtureDef chassisFixtureDef = new FixtureDef();
@@ -64,9 +71,9 @@ public class Ship extends InputAdapter {
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
 		bodyDef.position.set(x, y);
-		bodyDef.angularDamping = .01f;
-		bodyDef.linearDamping = 0.0f;
+		bodyDef.linearDamping = 6.75f;
 		bodyDef.allowSleep = false;
+		bodyDef.fixedRotation = true;
 
 		// create the chassis
 		PolygonShape chassisShape = new PolygonShape();
@@ -75,7 +82,7 @@ public class Ship extends InputAdapter {
 
 		chassis = world.createBody(bodyDef);
 		chassis.createFixture(chassisFixtureDef);
-		
+
 		chassisSprite = new Sprite(Assets.instance.ship.ship);
 		chassisSprite.setSize(width, height);
 		chassisSprite.setOrigin(width / 2, height / 2);
@@ -101,15 +108,38 @@ public class Ship extends InputAdapter {
 	}
 
 	public void update(float delta) {
+		System.out.println(chassis.getPosition().x + " , " + chassis.getPosition().y);
+		
+		if (isMovingLeft) {
+			if (chassis.getLinearVelocity().x > -maxSpeed && chassis.getPosition().x > -worldWidth) {
+				chassis.setLinearVelocity(-maxSpeed, chassis.getLinearVelocity().y);
+			}
+		}
+		if (isMovingRight) {
+			if (chassis.getLinearVelocity().x < maxSpeed && chassis.getPosition().x < worldWidth) {
+				chassis.setLinearVelocity(maxSpeed, chassis.getLinearVelocity().y);
+			}
+		}
+		if (isMovingUp) {
+			if (chassis.getLinearVelocity().y < maxSpeed && chassis.getPosition().y < worldHeight) {
+				chassis.setLinearVelocity(chassis.getLinearVelocity().x, maxSpeed);
+			} 
+		}
+		if (isMovingDown) {
+			if (chassis.getLinearVelocity().y > -maxSpeed && chassis.getPosition().y > -worldHeight) {
+				chassis.setLinearVelocity(chassis.getLinearVelocity().x, -maxSpeed);
+			}
+		}
+
 		if (isFiringMainRocket) {
-				chassis.applyLinearImpulse(MyMath.getRectCoords(
-						.5f * chassis.getMass(),
-						(float) (Math.toDegrees(chassis.getAngle()) + -270)),
-						chassis.getPosition(), false);
-				fuel -= .001f;
-				if (fuel < 0.0f) {
-					isFiringMainRocket = false;
-				}
+			chassis.applyLinearImpulse(MyMath.getRectCoords(
+					.5f * chassis.getMass(),
+					(float) (Math.toDegrees(chassis.getAngle()) + -270)),
+					chassis.getPosition(), false);
+			fuel -= .001f;
+			if (fuel < 0.0f) {
+				isFiringMainRocket = false;
+			}
 		}
 		if (isFiringLeftRocket) {
 			chassis.applyAngularImpulse(.25f * chassis.getMass(), false);
@@ -119,7 +149,7 @@ public class Ship extends InputAdapter {
 		}
 		// updateLights(delta);
 	}
-	
+
 	private void updateLights(float delta) {
 
 		// update lights
@@ -136,6 +166,10 @@ public class Ship extends InputAdapter {
 	public void render(SpriteBatch spriteBatch, float delta) {
 		x = chassis.getPosition().x;
 		y = chassis.getPosition().y;
+
+		if (isMovingLeft) {
+
+		}
 
 		if (!mainExhaust.isComplete()) {
 			Vector2 pos = chassis
@@ -158,13 +192,10 @@ public class Ship extends InputAdapter {
 			setSideExhaustRotation(isFiringLeftRocket);
 			sideExhaust.draw(spriteBatch, delta);
 		}
-		
-		
-		chassisSprite.setPosition(x - width / 2, y - height / 2);
-		chassisSprite
-				.setRotation((float) Math.toDegrees(chassis.getAngle()));
-		chassisSprite.draw(spriteBatch);
 
+		chassisSprite.setPosition(x - width / 2, y - height / 2);
+		chassisSprite.setRotation((float) Math.toDegrees(chassis.getAngle()));
+		chassisSprite.draw(spriteBatch);
 
 	}
 
@@ -197,7 +228,7 @@ public class Ship extends InputAdapter {
 		sideExhaust.getAngle().setHighMin(angle + (isLeft ? 0 : 170));
 		sideExhaust.getAngle().setHighMax(angle + (isLeft ? -20 : 190));
 	}
-	
+
 	public void die() {
 		isDead = true;
 		isFiringMainRocket = false;
@@ -215,8 +246,7 @@ public class Ship extends InputAdapter {
 		spotLight.setActive(false);
 		smallLight.setActive(false);
 	}
-	
-	
+
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 
@@ -227,34 +257,17 @@ public class Ship extends InputAdapter {
 	public boolean keyDown(int keycode) {
 
 		switch (keycode) {
-		// jump
 		case Keys.W:
+			isMovingUp = true;
 			break;
-		// move right
 		case Keys.A:
-
-			if (!isDead && fuel > 0) {
-				sideExhaust.start();
-				AudioManager.instance.play(Assets.instance.sounds.sideExhaust);
-				isFiringLeftRocket = true;
-			}
+			isMovingLeft = true;
 			break;
-		// move right
 		case Keys.D:
-
-			if (!isDead && fuel > 0) {
-				sideExhaust.start();
-				AudioManager.instance.play(Assets.instance.sounds.sideExhaust);
-				isFiringRightRocket = true;
-			}
+			isMovingRight = true;
 			break;
-		// spin clockwise
-		case Keys.SPACE:
-			if (!isDead && fuel > 0) {
-				mainExhaust.start();
-				AudioManager.instance.play(Assets.instance.sounds.mainExhaust);
-				isFiringMainRocket = true;
-			}
+		case Keys.S:
+			isMovingDown = true;
 			break;
 		default:
 			break;
@@ -266,26 +279,20 @@ public class Ship extends InputAdapter {
 	@Override
 	public boolean keyUp(int keycode) {
 		switch (keycode) {
-		// jump
 		case Keys.W:
+			isMovingUp = false;
 			break;
-		// move right
 		case Keys.A:
-			sideExhaust.allowCompletion();
-			isFiringLeftRocket = false;
-			AudioManager.instance.stopSound(Assets.instance.sounds.sideExhaust);
+			isMovingLeft = false;
 			break;
-		// move right
 		case Keys.D:
-			sideExhaust.allowCompletion();
-			isFiringRightRocket = false;
-			AudioManager.instance.stopSound(Assets.instance.sounds.sideExhaust);
+			isMovingRight = false;
 			break;
-		// spin clockwise
+		case Keys.S:
+			isMovingDown = false;
+			break;
 		case Keys.SPACE:
-			mainExhaust.allowCompletion();
-			AudioManager.instance.stopSound(Assets.instance.sounds.mainExhaust);
-			isFiringMainRocket = false;
+
 			break;
 		default:
 			break;

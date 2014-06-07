@@ -23,12 +23,12 @@ public class CameraController {
 		target = new Vector2(0,0);
 		zoom = new Vector2();
 		targetZoom = new Vector2();
-		zoom.x = .01f;
+		zoom.x = .1f;
 		targetZoom.x = .1f; 			// init zoom
 	}
 
 	public void update(float deltaTime) {
-		position.lerp(target, FOLLOW_SPEED); 
+		//position.lerp(target, FOLLOW_SPEED); 
 		if (targetZoom.x != zoom.x) {
 			zoom.lerp(targetZoom, ZOOM_SPEED);
 		}

@@ -90,17 +90,6 @@ public class Play implements Screen {
 						return false;
 					}
 
-					// zoom
-					@Override
-					public boolean scrolled(int amount) {
-						if (amount == 1) {
-							cameraController.addZoom(cameraGame.zoom * .25f);
-						} else if (amount == -1) {
-							cameraController.addZoom(-cameraGame.zoom * .25f);
-						}
-						return true;
-					}
-
 					// click or touch
 					@Override
 					public boolean touchDown(int screenX, int screenY,
@@ -215,9 +204,10 @@ public class Play implements Screen {
 		cameraController = new CameraController();
 
 		background = new Sprite(Assets.instance.background.stars);
+		background.setSize(120, 100);
+		background.setPosition(-background.getWidth() / 2, -background.getHeight() / 2);
 
-		background.setBounds(-width / 2, -height / 2, width, height);
-		
+		background.setOrigin(-width / 2, -height / 2);
 		lightBolts = new Array<LightBolt>();
 	}
 
