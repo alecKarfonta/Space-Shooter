@@ -1,0 +1,90 @@
+
+atlas.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+background/blueNebula
+  rotate: false
+  xy: 1028, 1198
+  size: 800, 719
+  orig: 800, 719
+  offset: 0, 0
+  index: -1
+background/itsFullOfStars
+  rotate: false
+  xy: 2, 893
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+background/rainbowNebula
+  rotate: false
+  xy: 2, 2
+  size: 791, 889
+  orig: 791, 889
+  offset: 0, 0
+  index: -1
+background/redNebula
+  rotate: false
+  xy: 1028, 632
+  size: 751, 564
+  orig: 751, 564
+  offset: 0, 0
+  index: -1
+
+atlas2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+ship/ship
+  rotate: false
+  xy: 2, 2
+  size: 170, 102
+  orig: 170, 102
+  offset: 0, 0
+  index: -1
+
+atlas3.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+ui/arrow
+  rotate: false
+  xy: 187, 106
+  size: 8, 53
+  orig: 8, 53
+  offset: 0, 0
+  index: -1
+ui/blueGuauge
+  rotate: false
+  xy: 2, 30
+  size: 183, 129
+  orig: 183, 129
+  offset: 0, 0
+  index: -1
+ui/border
+  rotate: false
+  xy: 2, 16
+  size: 100, 12
+  orig: 100, 12
+  offset: 0, 0
+  index: -1
+ui/fill
+  rotate: false
+  xy: 2, 2
+  size: 100, 12
+  orig: 100, 12
+  offset: 0, 0
+  index: -1
+
+atlas4.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+weapons/laserBlue
+  rotate: false
+  xy: 2, 2
+  size: 17, 31
+  orig: 17, 31
+  offset: 0, 0
+  index: -1
