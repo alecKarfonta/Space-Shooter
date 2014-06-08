@@ -1,6 +1,8 @@
 package com.alec.spaceShooter.models;
 
 import com.alec.spaceShooter.views.Play;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -12,6 +14,8 @@ public class RedAlienShip extends Ship {
 	private Sprite chassisSprite;
 	private float width = 3, height = 3;
 	private float x, y;
+	private ParticleEffect explosion;
+	private boolean canDelete = false;
 
 	public RedAlienShip(Play play, Vector2 initPos) {
 		super(play, initPos);
@@ -20,6 +24,10 @@ public class RedAlienShip extends Ship {
 		chassisSprite = new Sprite(Assets.instance.ships.redAlien);
 		chassisSprite.setSize(width, height);
 		chassisSprite.setOrigin(width / 2, width / 2);
+		
+		explosion = new ParticleEffect();
+		explosion.load(Gdx.files.internal("particles/explosion.pfx"),
+				Gdx.files.internal("particles"));
 
 	}
 
@@ -39,6 +47,11 @@ public class RedAlienShip extends Ship {
 			chassisSprite.setRotation((float) Math.toDegrees(getChassis()
 					.getAngle()));
 			chassisSprite.draw(spriteBatch);
+		} else {
+			explosion.draw(spriteBatch, delta);
+			if (explosion.isComplete()) {
+				canDelete = true;
+			}
 		}
 
 	}
@@ -46,11 +59,16 @@ public class RedAlienShip extends Ship {
 	@Override
 	public void die() {
 		super.die();
-
+		explosion.setPosition(getChassis().getPosition().x, getChassis().getPosition().y);
+		explosion.start();
 	}
-
+	
 	public void fireLaser() {
 		play.addLightBolt(new LightBolt(play, getChassis().getPosition().add(0, -height - 1), -1)); // target
 
+	}
+	
+	public boolean canDelete() {
+		return canDelete;
 	}
 }

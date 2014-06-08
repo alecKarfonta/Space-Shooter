@@ -72,7 +72,7 @@ public class Play implements Screen {
 		cameraController.applyTo(cameraGame);
 		
 		for (RedAlienShip redAlien : redAliens) {
-			if (redAlien.isDead) {
+			if (redAlien.canDelete()) {
 				destroyQueue.add(redAlien.getChassis());
 				redAliens.removeValue(redAlien, true);
 			}
