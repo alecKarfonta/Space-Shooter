@@ -137,6 +137,7 @@ public class Play implements Screen {
 				switch (keycode) {
 				case Keys.SPACE:
 					playerShip.fireLaser();
+					break;
 				case Keys.W:
 					playerShip.moveUp();
 					break;

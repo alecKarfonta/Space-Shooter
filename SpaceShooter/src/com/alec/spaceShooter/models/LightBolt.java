@@ -11,7 +11,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 public class LightBolt {
-	private float initVel = 1000;
+	private float initVel = 50;
 	private float width = .2f;
 	private float height = 1f;
 	private Sprite sprite;

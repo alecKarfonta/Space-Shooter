@@ -58,8 +58,7 @@ public class Ship {
 				chassis.setLinearVelocity(-speed,
 						chassis.getLinearVelocity().y);
 			}
-		}
-		if (isMovingRight) {
+		} else if (isMovingRight) {
 			if (chassis.getLinearVelocity().x < speed
 					&& chassis.getPosition().x < Constants.WORLD_WIDTH) {
 				chassis.setLinearVelocity(speed,
@@ -72,8 +71,7 @@ public class Ship {
 				chassis.setLinearVelocity(chassis.getLinearVelocity().x,
 						speed);
 			}
-		}
-		if (isMovingDown) {
+		} else if (isMovingDown) {
 			if (chassis.getLinearVelocity().y > -speed
 					&& chassis.getPosition().y > -Constants.WORLD_HEIGHT) {
 				chassis.setLinearVelocity(chassis.getLinearVelocity().x,
