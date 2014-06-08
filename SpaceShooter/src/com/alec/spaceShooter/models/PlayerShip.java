@@ -1,7 +1,8 @@
 package com.alec.spaceShooter.models;
 
 import com.alec.spaceShooter.views.Play;
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -10,6 +11,7 @@ public class PlayerShip extends Ship {
 	
 	private Play play; 	// keep a reference in play for easily creating and destroying objects from ship
 	private Sprite chassisSprite;
+	private ParticleEffect exhaust;
 	private float width = 5,
 			height = 5;
 	private float x, y;
@@ -21,6 +23,10 @@ public class PlayerShip extends Ship {
 		chassisSprite = new Sprite(Assets.instance.ships.playerShip);
 		chassisSprite.setSize(width,height);
 		chassisSprite.setOrigin(width / 2, width / 2);
+		
+		exhaust = new ParticleEffect();
+		exhaust.load(Gdx.files.internal("particles/exhaust.pfx"),
+				Gdx.files.internal("particles"));
 	}
 
 	@Override
@@ -34,9 +40,14 @@ public class PlayerShip extends Ship {
 		super.render(spriteBatch, delta);
 		x = getChassis().getPosition().x;
 		y = getChassis().getPosition().y;
+		
+		exhaust.setPosition(x, y - 2);
+		exhaust.draw(spriteBatch, delta);
+		
 		chassisSprite.setPosition(x - width / 2, y - height / 2);
 		chassisSprite.setRotation((float) Math.toDegrees(getChassis().getAngle()));
 		chassisSprite.draw(spriteBatch);
+		
 		
 	}
 	

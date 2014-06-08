@@ -2,8 +2,6 @@ package com.alec.spaceShooter.views;
 
 import java.util.ArrayList;
 
-import box2dLight.RayHandler;
-
 import com.alec.spaceShooter.Constants;
 import com.alec.spaceShooter.controllers.CameraController;
 import com.alec.spaceShooter.controllers.MyContactListener;
@@ -21,6 +19,8 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -35,9 +35,10 @@ public class Play implements Screen {
 	private OrthographicCamera cameraGame, cameraUI;
 	private CameraController cameraController;
 	private SpriteBatch spriteBatch, hudBatch;
-	private RayHandler rayHandler;
+	private ShapeRenderer shapeRenderer;
 	private Sprite background;
 	private FuelGauge fuelGauge;
+	private Array<Vector2> fastStars, slowStars;
 
 	private final float TIMESTEP = 1 / 60f;
 	private final int VELOCITYITERATIONS = 8,
@@ -59,6 +60,7 @@ public class Play implements Screen {
 		width = Gdx.graphics.getWidth();
 		height = Gdx.graphics.getHeight();
 		createWorld();
+		createBackground();
 		createUI();
 		createShip();
 		createInputAdapter();
@@ -84,6 +86,28 @@ public class Play implements Screen {
 			timerRandomFire = 0;
 			redAliens.get((int) (redAliens.size * Math.random())).fireLaser();
 		}
+		
+		
+		shapeRenderer.begin(ShapeType.Point);
+		for (Vector2 star : fastStars) {
+			star.add(0 , -.2f);
+			shapeRenderer.point(star.x, star.y, 0);
+			// if the star goes off screen
+			if (star.y < -height / 2) {
+				star.y = height / 2;
+				star.x = (float) (-(height / 2) + height * Math.random());
+			}
+		}
+		for (Vector2 star : slowStars) {
+			star.add(0 , .07f);
+			shapeRenderer.point(star.x, star.y, 0);
+			// if the star goes off screen
+			if (star.y < -height / 2) {
+				star.y = height / 2;
+				star.x = (float) (-(height / 2) + height * Math.random());
+			}
+		}
+		shapeRenderer.end();
 	}
 	
 	@Override
@@ -97,7 +121,7 @@ public class Play implements Screen {
 		spriteBatch.setProjectionMatrix(cameraGame.combined);
 		spriteBatch.begin();
 
-		background.draw(spriteBatch);
+		//background.draw(spriteBatch);
 
 		// render the car's effects
 		playerShip.render(spriteBatch, delta);
@@ -113,6 +137,9 @@ public class Play implements Screen {
 			redAlien.update(delta);
 			redAlien.render(spriteBatch, delta);
 		}
+		
+		// draw a scrolling background
+		
 		
 		// debugRenderer.render(world, camera.combined);
 
@@ -205,7 +232,6 @@ public class Play implements Screen {
 			}
 		}); 
 	}
-
 	
 	public void createWorld() {
 		// create the world with surface gravity
@@ -230,6 +256,22 @@ public class Play implements Screen {
 		lightBolts = new Array<LightBolt>();
 	}
 
+	public void createBackground() {
+		fastStars = new Array<Vector2>();
+		slowStars = new Array<Vector2>();
+		shapeRenderer = new ShapeRenderer();
+		shapeRenderer.setProjectionMatrix(cameraGame.combined);
+		
+		// fix the offset to begin from the bottom left of the screen
+		float startX = -(width / 2),
+				startY = -(height / 2);
+		// randomly generate the star field
+		for (int index = 0; index < 100; index++) {
+			fastStars.add(new Vector2((float)(startX + width * Math.random()), (float)(startY + height * Math.random())));
+			slowStars.add(new Vector2((float)(startX + width * Math.random()), (float)(startY + height * Math.random())));
+		}
+	}
+	
 	public void createShip() {
 		playerShip = new PlayerShip(this, new Vector2(0, 0));
 		redAliens = new Array<RedAlienShip>();
