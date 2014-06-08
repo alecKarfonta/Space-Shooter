@@ -36,11 +36,18 @@ atlas2.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-ship/ship
+ships/playerShip
   rotate: false
-  xy: 2, 2
+  xy: 186, 148
   size: 170, 102
   orig: 170, 102
+  offset: 0, 0
+  index: -1
+ships/redAlien
+  rotate: false
+  xy: 2, 2
+  size: 182, 248
+  orig: 182, 248
   offset: 0, 0
   index: -1
 

@@ -25,7 +25,7 @@ public class Assets implements Disposable, AssetErrorListener {
 	public AssetFonts fonts;
 	public AssetSounds sounds;
 	public AssetMusic music;
-	public AssetShip ship;
+	public AssetShips ships;
 	public AssetBackground background;
 	public AssetUI ui;
 	public AssetWeapons weapons;
@@ -53,7 +53,7 @@ public class Assets implements Disposable, AssetErrorListener {
 		atlas = assetManager.get("images/atlas.pack");
 		
 		// create the game resources (inner Asset~ classes)
-		ship = new AssetShip(atlas);
+		ships = new AssetShips(atlas);
 		weapons = new AssetWeapons(atlas);
 		background = new AssetBackground(atlas);
 		ui = new AssetUI(atlas);
@@ -62,11 +62,12 @@ public class Assets implements Disposable, AssetErrorListener {
 		music = new AssetMusic(assetManager);
 	}
 	
-	public class AssetShip {
-		public final AtlasRegion ship;
+	public class AssetShips {
+		public final AtlasRegion playerShip, redAlien;
 		
-		public AssetShip(TextureAtlas atlas) {
-			ship = atlas.findRegion("ship/ship");
+		public AssetShips(TextureAtlas atlas) {
+			playerShip = atlas.findRegion("ships/playerShip");
+			redAlien = atlas.findRegion("ships/redAlien");
 		}
 	}
 	

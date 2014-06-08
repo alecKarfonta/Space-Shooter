@@ -1,6 +1,6 @@
 package com.alec.spaceShooter.models;
 
-import com.alec.spaceShooter.MyMath;
+import com.alec.spaceShooter.views.Play;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -9,19 +9,20 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
 
 public class LightBolt {
-	
-	private Vector2 target;
-	private float initVel = 100000;
-	private float width = .1f;
+	private float initVel = 1000;
+	private float width = .2f;
 	private float height = 1f;
 	private Sprite sprite;
 	private Body body;
 
-	public LightBolt (World world, Vector2 initPos, Vector2 target) {
-		this.target = target;
+	public LightBolt (Play play, Vector2 initPos) {
+		this(play, initPos, 1);
+	}
+	
+	public LightBolt (Play play, Vector2 initPos, int direction) {
+		initVel *= direction;
 		
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
@@ -36,9 +37,9 @@ public class LightBolt {
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.isSensor = true;
 		fixtureDef.shape = shape;
-		fixtureDef.density = 0.001f;
-		fixtureDef.restitution = 0.0f;
-		fixtureDef.friction = 0.0f;
+		fixtureDef.density = 0.01f;
+		fixtureDef.restitution = 0.1f;
+		fixtureDef.friction = 0.1f;
 		
 		sprite = new Sprite(Assets.instance.weapons.blueLaser);
 		sprite.setScale(6, 2);
@@ -46,17 +47,11 @@ public class LightBolt {
 				height);
 		sprite.setOrigin(width/2, height/2);
 		
-		body = world.createBody(bodyDef);
+		body = play.createBody(bodyDef);
 		body.createFixture(fixtureDef);
-		body.getFixtureList().get(0).setUserData(this);
+		body.setUserData(this);
 		
-		float angle = MyMath.getAngleBetween(initPos, target);
-		body.setTransform(initPos, (float) Math.toRadians(90 + angle));
-		
-		Vector2 forceVector = new Vector2();	// polar
-		forceVector.x = initVel;
-		forceVector.y = angle;
-		body.setLinearVelocity(MyMath.getRectCoords(forceVector));
+		body.setLinearVelocity(new Vector2(0,initVel));
 	}
 
 	public void render(SpriteBatch batch) {
@@ -64,18 +59,6 @@ public class LightBolt {
 				body.getPosition().y - height/2);
 		sprite.setRotation((float) Math.toDegrees(body.getAngle()));
 		sprite.draw(batch);
-	}
-	
-
-
-	public void setTarget(Vector2 newTarget) {
-		this.target = newTarget;
-		float angle = MyMath.getAngleBetween(body.getPosition(), target);
-		body.setTransform(body.getPosition(), (float) Math.toRadians(angle));
-		Vector2 forceVector = new Vector2();	// polar
-		forceVector.x = initVel;
-		forceVector.y = angle;
-		body.setLinearVelocity(MyMath.getRectCoords(forceVector));
 	}
 	
 }

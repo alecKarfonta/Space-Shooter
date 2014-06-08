@@ -1,7 +1,8 @@
 package com.alec.spaceShooter.controllers;
 
+import com.alec.spaceShooter.models.LightBolt;
+import com.alec.spaceShooter.models.RedAlienShip;
 import com.alec.spaceShooter.views.Play;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -18,7 +19,15 @@ public class MyContactListener implements ContactListener {
 	
 	@Override
 	public void beginContact(Contact contact) {
-		
+		System.out.println(contact.getFixtureA().getBody().getUserData() + " - " + contact.getFixtureB().getBody().getUserData());
+		// Light Bolt - Red Alien
+		if (contact.getFixtureA().getBody().getUserData() instanceof LightBolt
+				&& contact.getFixtureB().getBody().getUserData() instanceof RedAlienShip) {
+			((RedAlienShip)contact.getFixtureB().getBody().getUserData()).damage(.5f);
+		} else if (contact.getFixtureA().getBody().getUserData() instanceof RedAlienShip
+				&& contact.getFixtureB().getBody().getUserData() instanceof LightBolt) {
+			((RedAlienShip)contact.getFixtureA().getBody().getUserData()).damage(.5f);
+		}
 	}
 
 	@Override
@@ -34,7 +43,6 @@ public class MyContactListener implements ContactListener {
 	@Override
 	public void postSolve(Contact contact, ContactImpulse impulse) {
 		if (impulse.getNormalImpulses()[0] > 200) {
-			play.destroyLander();
 		}
 	}
 
