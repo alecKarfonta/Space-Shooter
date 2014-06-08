@@ -95,7 +95,7 @@ public class Play implements Screen {
 			// if the star goes off screen
 			if (star.y < -height / 2) {
 				star.y = height / 2;
-				star.x = (float) (-(height / 2) + height * Math.random());
+				star.x = (float) (-(width / 2) + width * Math.random());
 			}
 		}
 		for (Vector2 star : slowStars) {
@@ -104,7 +104,7 @@ public class Play implements Screen {
 			// if the star goes off screen
 			if (star.y < -height / 2) {
 				star.y = height / 2;
-				star.x = (float) (-(height / 2) + height * Math.random());
+				star.x = (float) (-(width / 2) + width * Math.random());
 			}
 		}
 		shapeRenderer.end();
